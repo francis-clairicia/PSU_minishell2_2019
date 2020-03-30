@@ -22,7 +22,7 @@ static void unify_args(char **command, int arg_with_quote, char quote)
     }
 }
 
-char **parse_command_line(char const *command_line)
+static char **get_argv(char const *command_line)
 {
     int i = 0;
     char separators[] = {' ', '\t', '\0'};
@@ -38,4 +38,16 @@ char **parse_command_line(char const *command_line)
         i += 1;
     }
     return (command);
+}
+
+command_t parse_command_line(char const *command_line)
+{
+    char line_copy[my_strlen(command_line) + 1];
+    command_t cmd;
+
+    my_strcpy(line_copy, command_line);
+    cmd.input_fd = get_input_fd(line_copy);
+    cmd.output_fd = get_output_fd(line_copy);
+    cmd.argv = get_argv(line_copy);
+    return (cmd);
 }

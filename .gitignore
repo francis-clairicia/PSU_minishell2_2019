@@ -1,0 +1,13 @@
+.vscode
+__pycache__
+*.o
+*.a
+a.out
+mysh
+unit_tests
+coverage
+scripts
+python.exe
+vgcore.*
+get_next_line_stdin
+log

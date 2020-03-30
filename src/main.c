@@ -9,8 +9,6 @@
 
 int mysh(void);
 
-int my_strcmp(const char *s1, const char *s2);
-
 static int print_help(void)
 {
     my_putstr("USAGE\n");

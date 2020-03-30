@@ -61,7 +61,8 @@ SRC			=	my_put_nbr.c				\
 				join_path.c					\
 				my_str_contains_only.c		\
 				my_memset.c					\
-				my_malloc_array.c
+				my_malloc_array.c			\
+				my_array_contains.c
 
 PRINTF		=	printf/my_printf.c					\
 				printf/my_printf_number.c			\

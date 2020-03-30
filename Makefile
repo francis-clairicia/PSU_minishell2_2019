@@ -9,6 +9,8 @@ SRC_NO_TEST			=	src/main.c							\
 						src/mysh.c
 
 SRC_TEST			=	src/minishell.c						\
+						src/exec_shell_command.c			\
+						src/exec_piped_commands.c			\
 						src/print_command_prompt.c			\
 						src/get_path_to_executable.c		\
 						src/find_binary_in_path.c			\
@@ -24,6 +26,7 @@ SRC_TEST			=	src/minishell.c						\
 						src/builtin/setenv.c				\
 						src/builtin/unsetenv.c				\
 						src/parsing/parse_command_line.c	\
+						src/parsing/change_fd.c				\
 						src/parsing/create_arg.c			\
 						src/parsing/remove_quotes.c
 

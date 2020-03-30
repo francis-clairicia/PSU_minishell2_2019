@@ -7,18 +7,16 @@
 
 #include "minishell.h"
 
-void sigint_handler_for_prompt(int signum)
+void sigint_handler_for_prompt(int signum UNUSED)
 {
     char current_directory[4097];
 
-    (void)signum;
     my_putstr("\n");
     print_command_prompt(getcwd(current_directory, 4097), DEFAULT_ENVIRONMENT);
 }
 
-void sigint_handler_for_process(int signum)
+void sigint_handler_for_process(int signum UNUSED)
 {
-    (void)signum;
     kill(getpid(), SIGCHLD);
     my_putstr_error("\n");
 }

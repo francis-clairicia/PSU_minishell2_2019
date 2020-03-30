@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2019
 ** My_Lib_C
 ** File description:
-** my_array_cpy.c
+** my_array_dup.c
 */
 
 #include <stdlib.h>

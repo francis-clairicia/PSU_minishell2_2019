@@ -13,7 +13,7 @@ Test(cd_builtin_command, change_the_current_working_directory)
 {
     char save_actual_dir[4097];
     char current_dir[4097];
-    char **envp = my_array_cpy(DEFAULT_ENVIRONMENT);
+    char **envp = my_array_dup(DEFAULT_ENVIRONMENT);
     int old_pwd = 0;
 
     cr_redirect_stderr();
@@ -32,7 +32,7 @@ Test(cd_builtin_command, move_to_home_path_when_no_args)
 {
     char save_actual_dir[4097];
     char current_dir[4097];
-    char **envp = my_array_cpy(DEFAULT_ENVIRONMENT);
+    char **envp = my_array_dup(DEFAULT_ENVIRONMENT);
     int home_index = find_var_env(envp, "HOME");
     char *home_path = get_var_value(envp, home_index);
     int old_pwd = 0;
@@ -49,7 +49,7 @@ Test(cd_builtin_command, move_to_home_path_when_no_args)
 
 Test(cd_builtin_command, print_error_when_too_many_arguments_are_given)
 {
-    char **envp = my_array_cpy(DEFAULT_ENVIRONMENT);
+    char **envp = my_array_dup(DEFAULT_ENVIRONMENT);
 
     cr_redirect_stderr();
     cr_expect_eq(minishell("cd / ~/Downloads", &envp), -1);

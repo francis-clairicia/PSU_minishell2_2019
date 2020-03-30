@@ -41,8 +41,17 @@ struct builtin
     builtin_function_t function;
 };
 
+typedef struct command_line
+{
+    char **argv;
+    int input_fd;
+    int output_fd;
+} command_t;
+
 int mysh(void);
 int minishell(char const *command_line, char ***envp);
+int exec_shell_command(command_t command, char ***envp);
+int exec_piped_commands(char const *command_line, char ***envp);
 void print_command_prompt(char const *cwd, char * const *envp);
 char *get_path_to_executable(char const *binary, char * const *envp);
 char *join_path(char const *path_1, char const *path_2);
@@ -52,7 +61,9 @@ char *get_var_value(char * const *envp, int index);
 char *create_variable(char const *variable, char const *value);
 builtin_function_t is_builtin(char * const *cmd);
 
-char **parse_command_line(char const *command_line);
+command_t parse_command_line(char const *command_line);
+int get_input_fd(char *line);
+int get_output_fd(char *line);
 void remove_quotes(char **command, int arg, char quote);
 void create_arg(char **command, int first, int last, char quote);
 

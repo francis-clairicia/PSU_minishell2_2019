@@ -31,6 +31,7 @@ int my_find_prime_sup(int nb);
 char **my_str_to_word_array(char const *str, char const *separators);
 int my_array_len(char * const *array);
 char **my_array_dup(char * const * src);
+int my_array_contains(char * const *array, char const *to_find);
 char *my_strcpy(char *dest, char const *src);
 char *my_strncpy(char *dest, char const *src, int n);
 char *my_revstr(char *str);

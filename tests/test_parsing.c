@@ -10,35 +10,35 @@
 
 Test(parse_command_line, parse_command_line)
 {
-    char **argv = parse_command_line("ls -l");
+    command_t command = parse_command_line("ls -l");
 
-    cr_assert_not_null(argv);
-    cr_expect_str_eq(argv[0], "ls");
-    cr_expect_str_eq(argv[1], "-l");
-    cr_expect_null(argv[2]);
-    free(argv);
+    cr_assert_not_null(command.argv);
+    cr_expect_str_eq(command.argv[0], "ls");
+    cr_expect_str_eq(command.argv[1], "-l");
+    cr_expect_null(command.argv[2]);
+    free(command.argv);
 }
 
 Test(parse_command_line, handle_single_quotes)
 {
-    char **argv = parse_command_line("ls '-l' 'second arg'");
+    command_t command = parse_command_line("ls '-l' 'second arg'");
 
-    cr_assert_not_null(argv);
-    cr_expect_str_eq(argv[0], "ls");
-    cr_expect_str_eq(argv[1], "-l");
-    cr_expect_str_eq(argv[2], "second arg");
-    cr_expect_null(argv[3]);
-    free(argv);
+    cr_assert_not_null(command.argv);
+    cr_expect_str_eq(command.argv[0], "ls");
+    cr_expect_str_eq(command.argv[1], "-l");
+    cr_expect_str_eq(command.argv[2], "second arg");
+    cr_expect_null(command.argv[3]);
+    free(command.argv);
 }
 
 Test(parse_command_line, handle_double_quotes)
 {
-    char **argv = parse_command_line("ls \"-l\" \"second arg\"");
+    command_t command = parse_command_line("ls \"-l\" \"second arg\"");
 
-    cr_assert_not_null(argv);
-    cr_expect_str_eq(argv[0], "ls");
-    cr_expect_str_eq(argv[1], "-l");
-    cr_expect_str_eq(argv[2], "second arg");
-    cr_expect_null(argv[3]);
-    free(argv);
+    cr_assert_not_null(command.argv);
+    cr_expect_str_eq(command.argv[0], "ls");
+    cr_expect_str_eq(command.argv[1], "-l");
+    cr_expect_str_eq(command.argv[2], "second arg");
+    cr_expect_null(command.argv[3]);
+    free(command.argv);
 }
