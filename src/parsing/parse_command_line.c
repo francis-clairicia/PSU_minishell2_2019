@@ -47,7 +47,8 @@ command_t parse_command_line(char const *command_line)
 
     my_strcpy(line_copy, command_line);
     cmd.input_fd = get_input_fd(line_copy);
-    cmd.output_fd = get_output_fd(line_copy);
+    if (cmd.input_fd >= 0)
+        cmd.output_fd = get_output_fd(line_copy);
     cmd.argv = get_argv(line_copy);
     return (cmd);
 }

@@ -13,7 +13,7 @@ static int launch_process(char const *binary, command_t command,
     int wstatus = 0;
     int child_pid = 0;
 
-    if (binary == NULL)
+    if (binary == NULL || command.input_fd == -1 || command.output_fd == -1)
         return (-1);
     child_pid = fork();
     if (child_pid == 0) {
@@ -37,8 +37,10 @@ int exec_shell_command(command_t command, char ***envp)
     int status = 0;
     builtin_function_t builtin = NULL;
 
-    if (command.argv == NULL)
-        return (1);
+    if (command.argv == NULL) {
+        my_putstr_error("Invalid null command.\n");
+        return (-1);
+    }
     builtin = is_builtin(command.argv);
     if (builtin != NULL) {
         status = builtin(command.argv, envp);

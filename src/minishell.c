@@ -17,7 +17,8 @@ int minishell(char const *command_line, char ***envp)
     if (command == NULL)
         return (1);
     while (status <= 0 && command[i] != NULL) {
-        status = exec_piped_commands(command[i], envp);
+        if (!my_str_contains_only(command[i], " \t"))
+            status = exec_piped_commands(command[i], envp);
         i += 1;
         if (status < 0)
             error = 1;
