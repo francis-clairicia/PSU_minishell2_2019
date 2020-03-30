@@ -61,6 +61,7 @@ int exec_piped_commands(char const *command_line, char ***envp)
         if (status != 0)
             break;
     }
+    my_free_array(piped_commands);
     destroy_all_commands(commands, nb_commands);
     return (status);
 }
