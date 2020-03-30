@@ -54,12 +54,10 @@ int exec_piped_commands(char const *command_line, char ***envp)
     for (i = 0; piped_commands[i] != NULL; i += 1)
         commands[i] = parse_command_line(piped_commands[i]);
     link_all_commands(commands, nb_commands);
-    for (i = 0; i < nb_commands; i += 1) {
+    for (i = 0; i < nb_commands && status == 0; i += 1) {
         status = exec_shell_command(commands[i], envp);
         if (commands[i].output_fd != 1 && commands[i].output_fd != 2)
             close(commands[i].output_fd);
-        if (status != 0)
-            break;
     }
     my_free_array(piped_commands);
     destroy_all_commands(commands, nb_commands);
