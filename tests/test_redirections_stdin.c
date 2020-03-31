@@ -13,14 +13,14 @@
 Test(stdin_redirection, read_a_file_as_standard_input)
 {
     char **envp = my_array_dup(DEFAULT_ENVIRONMENT);
-    int fd = open("tests/test_file.txt", O_CREAT | O_WRONLY, 0664);
+    int fd = open("tests/file_1.txt", O_CREAT | O_WRONLY, 0664);
 
     cr_redirect_stdout();
     my_putstr_fd(fd, "Yoo\n");
     close(fd);
-    cr_expect_eq(minishell("cat -e < tests/test_file.txt", &envp), 0);
+    cr_expect_eq(minishell("cat -e < tests/file_1.txt", &envp), 0);
     my_free_array(envp);
-    remove("tests/test_file.txt");
+    remove("tests/file_1.txt");
     cr_expect_stdout_eq_str("Yoo$\n");
 }
 

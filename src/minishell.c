@@ -16,10 +16,13 @@ int minishell(char const *command_line, char ***envp)
 
     if (command == NULL)
         return (1);
-    while (status <= 0 && command[i] != NULL) {
-        if (!my_str_contains_only(command[i], " \t"))
+    for (i = 0; status <= 0 && command[i] != NULL; i += 1) {
+        if (my_str_contains_only(command[i], " \t"))
+            continue;
+        if (check_redirection_validity(command[i]))
             status = exec_piped_commands(command[i], envp);
-        i += 1;
+        else
+            status = -1;
         if (status < 0)
             error = 1;
     }

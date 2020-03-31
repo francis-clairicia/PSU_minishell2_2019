@@ -15,12 +15,12 @@ Test(stdout_redirection, write_on_a_file_instead_of_terminal)
     char **envp = my_array_dup(DEFAULT_ENVIRONMENT);
     FILE *file = NULL;
 
-    cr_expect_eq(minishell("echo BONJOUR > tests/test_file.txt", &envp), 0);
+    cr_expect_eq(minishell("echo BONJOUR > tests/file_2.txt", &envp), 0);
     my_free_array(envp);
-    file = fopen("tests/test_file.txt", "r");
+    file = fopen("tests/file_2.txt", "r");
     cr_expect_file_contents_eq_str(file, "BONJOUR\n");
     fclose(file);
-    remove("tests/test_file.txt");
+    remove("tests/file_2.txt");
 }
 
 Test(stdout_redirection, append_to_a_file)
@@ -28,13 +28,13 @@ Test(stdout_redirection, append_to_a_file)
     char **envp = my_array_dup(DEFAULT_ENVIRONMENT);
     FILE *file = NULL;
 
-    cr_expect_eq(minishell("echo BONJOUR >> tests/test_file.txt", &envp), 0);
-    cr_expect_eq(minishell("echo Au_Revoir >> tests/test_file.txt", &envp), 0);
+    cr_expect_eq(minishell("echo BONJOUR >> tests/file_3.txt", &envp), 0);
+    cr_expect_eq(minishell("echo Au_Revoir >> tests/file_3.txt", &envp), 0);
     my_free_array(envp);
-    file = fopen("tests/test_file.txt", "r");
+    file = fopen("tests/file_3.txt", "r");
     cr_expect_file_contents_eq_str(file, "BONJOUR\nAu_Revoir\n");
     fclose(file);
-    remove("tests/test_file.txt");
+    remove("tests/file_3.txt");
 }
 
 Test(stdout_redirection, print_error_if_there_is_no_file)

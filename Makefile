@@ -27,6 +27,7 @@ SRC_TEST			=	src/minishell.c						\
 						src/builtin/unsetenv.c				\
 						src/parsing/parse_command_line.c	\
 						src/parsing/change_fd.c				\
+						src/parsing/check_line_validity.c	\
 						src/parsing/create_arg.c			\
 						src/parsing/remove_quotes.c
 

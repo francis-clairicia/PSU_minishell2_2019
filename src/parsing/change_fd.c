@@ -15,8 +15,7 @@ static void get_file(char *file, char *line, int start, char chevrons[2])
 
     my_memset(file, 0, 256);
     line[start] = ' ';
-    if (line[start + 1] == chevrons[0])
-        line[start + 1] = ' ';
+    line[start + 1] = (line[start + 1] == chevrons[0]) ? ' ' : line[start + 1];
     while (line[start] != '\0' && my_strchr(non_valid, line[start]))
         start += 1;
     while (line[start + count] != '\0'
@@ -44,11 +43,19 @@ static int here_document_command(char const *end)
     return (pipefd[0]);
 }
 
+static int open_file(char const *file, int flags, int mode)
+{
+    int fd = open(file, flags, mode);
+
+    if (fd == -1)
+        print_error(file, strerror(errno));
+    return (fd);
+}
+
 int get_input_fd(char *line)
 {
     char chevrons[2] = {'<', '>'};
     char file[256];
-    int fd = 0;
     int chevron = my_strchr_index(line, chevrons[0]);
     bool here_document = false;
 
@@ -62,17 +69,13 @@ int get_input_fd(char *line)
     }
     if (here_document)
         return (here_document_command(file));
-    fd = open(file, O_RDONLY);
-    if (fd == -1)
-        print_error(file, strerror(errno));
-    return (fd);
+    return (open_file(file, O_RDONLY, 0));
 }
 
 int get_output_fd(char *line)
 {
     char chevrons[2] = {'>', '<'};
     char file[256];
-    int fd = 0;
     int chevron = my_strchr_index(line, chevrons[0]);
     int flags = O_CREAT | O_WRONLY;
 
@@ -84,8 +87,5 @@ int get_output_fd(char *line)
         my_putstr_error("Missing name for redirect.\n");
         return (-1);
     }
-    fd = open(file, flags, 0644);
-    if (fd == -1)
-        print_error(file, strerror(errno));
-    return (fd);
+    return (open_file(file, flags, 0644));
 }

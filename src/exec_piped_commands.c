@@ -24,14 +24,6 @@ static bool link_all_commands(command_t commands[], int nb_commands)
     int i = 0;
 
     for (i = 1; i < nb_commands; i += 1) {
-        if (commands[i - 1].output_fd != 1) {
-            my_putstr_error("Ambiguous output redirect.\n");
-            return (false);
-        }
-        if (commands[i].input_fd != 0) {
-            my_putstr_error("Ambiguous input redirect.\n");
-            return (false);
-        }
         if (pipe(pipefd) != 0)
             return (false);
         commands[i - 1].output_fd = pipefd[1];
@@ -40,13 +32,31 @@ static bool link_all_commands(command_t commands[], int nb_commands)
     return (true);
 }
 
-static void destroy_command(command_t command)
+static bool destroy_command(command_t command)
 {
-    if (command.input_fd != 0)
+    if (command.input_fd != 0 && command.input_fd != -1)
         close(command.input_fd);
-    if (command.output_fd != 1 && command.output_fd != 2)
+    if (command.output_fd != 1 && command.output_fd != 2
+    && command.output_fd != -1)
         close(command.output_fd);
     my_free_array(command.argv);
+    return (false);
+}
+
+static bool init_commands(command_t commands[], char * const *piped_commands)
+{
+    int i = 0;
+
+    for (i = 0; piped_commands[i] != NULL; i += 1) {
+        commands[i] = parse_command_line(piped_commands[i]);
+        if (commands[i].argv == NULL) {
+            my_putstr_error("Invalid null command.\n");
+            return (destroy_command(commands[i]));
+        }
+        if (commands[i].input_fd < 0 || commands[i].output_fd < 0)
+            return (destroy_command(commands[i]));
+    }
+    return (true);
 }
 
 int exec_piped_commands(char const *command_line, char ***envp)
@@ -61,8 +71,8 @@ int exec_piped_commands(char const *command_line, char ***envp)
         my_putstr_error("Invalid null command.\n");
         return (-1);
     }
-    for (i = 0; piped_commands[i] != NULL; i += 1)
-        commands[i] = parse_command_line(piped_commands[i]);
+    if (!init_commands(commands, piped_commands))
+        return (-1);
     if (!link_all_commands(commands, nb_commands))
         return (-1);
     for (i = 0; i < nb_commands && status == 0; i += 1) {
