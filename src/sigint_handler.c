@@ -17,8 +17,7 @@ void sigint_handler_for_prompt(int signum UNUSED)
 
 void sigint_handler_for_process(int signum UNUSED)
 {
-    kill(getpid(), SIGCHLD);
-    my_putstr_error("\n");
+    return;
 }
 
 sighandler_t bind_sigint_signal(int func)

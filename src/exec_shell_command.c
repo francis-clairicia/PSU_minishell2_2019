@@ -5,7 +5,20 @@
 ** exec_shell_command.c
 */
 
+#include <string.h>
 #include "minishell.h"
+
+static int handle_status(int wstatus)
+{
+    if (WIFSIGNALED(wstatus)) {
+        if (WTERMSIG(wstatus) != SIGINT) {
+            print_signal(WTERMSIG(wstatus), WCOREDUMP(wstatus));
+            return (-1);
+        }
+        my_putstr_error("\n");
+    }
+    return (0);
+}
 
 static int launch_process(char const *binary, command_t command,
     char * const *envp)
@@ -24,11 +37,7 @@ static int launch_process(char const *binary, command_t command,
         return (1);
     }
     waitpid(child_pid, &wstatus, 0);
-    if (WIFSIGNALED(wstatus) && WTERMSIG(wstatus) != SIGINT) {
-        print_signal(WTERMSIG(wstatus), WCOREDUMP(wstatus));
-        return (-1);
-    }
-    return (0);
+    return (handle_status(wstatus));
 }
 
 int exec_shell_command(command_t command, char ***envp)
