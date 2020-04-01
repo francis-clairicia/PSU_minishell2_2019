@@ -32,7 +32,7 @@ static bool link_all_commands(command_t commands[], int nb_commands)
     return (true);
 }
 
-static bool destroy_command(command_t command)
+static void destroy_command(command_t command)
 {
     if (command.input_fd != 0 && command.input_fd != -1)
         close(command.input_fd);
@@ -40,23 +40,30 @@ static bool destroy_command(command_t command)
     && command.output_fd != -1)
         close(command.output_fd);
     my_free_array(command.argv);
-    return (false);
 }
 
 static bool init_commands(command_t commands[], char * const *piped_commands)
 {
     int i = 0;
+    int nb_init = 0;
+    bool status = true;
 
     for (i = 0; piped_commands[i] != NULL; i += 1) {
         commands[i] = parse_command_line(piped_commands[i]);
         if (commands[i].argv == NULL) {
             my_putstr_error("Invalid null command.\n");
-            return (destroy_command(commands[i]));
+            status = false;
         }
-        if (commands[i].input_fd < 0 || commands[i].output_fd < 0)
-            return (destroy_command(commands[i]));
+        status &= (commands[i].input_fd >= 0 && commands[i].output_fd >= 1);
+        if (status == false)
+            break;
     }
-    return (true);
+    if (status == false) {
+        nb_init = i;
+        for (i = 0; i <= nb_init; i += 1)
+            destroy_command(commands[i]);
+    }
+    return (status);
 }
 
 int exec_piped_commands(char const *command_line, char ***envp)
@@ -69,12 +76,12 @@ int exec_piped_commands(char const *command_line, char ***envp)
 
     if (nb_commands <= occurence_in_str(command_line, '|')) {
         my_putstr_error("Invalid null command.\n");
-        return (-1);
+        status = -1;
     }
-    if (!init_commands(commands, piped_commands))
-        return (-1);
-    if (!link_all_commands(commands, nb_commands))
-        return (-1);
+    if (status == 0 && !init_commands(commands, piped_commands))
+        status = -1;
+    if (status == 0 && !link_all_commands(commands, nb_commands))
+        status = -1;
     for (i = 0; i < nb_commands && status == 0; i += 1) {
         status = exec_shell_command(commands[i], envp);
         destroy_command(commands[i]);
