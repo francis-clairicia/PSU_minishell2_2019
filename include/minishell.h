@@ -65,8 +65,8 @@ command_t parse_command_line(char const *command_line);
 int get_input_fd(char *line);
 int get_output_fd(char *line);
 bool check_redirection_validity(char const *line);
-void remove_quotes(char **command, int arg, char quote);
-void create_arg(char **command, int first, int last, char quote);
+bool remove_quotes(char **command, int arg, char quote);
+bool create_arg(char **command, int first, int last);
 
 int cd_builtin_command(char * const *av, char ***envp);
 int env_builtin_command(char * const *av, char ***envp);

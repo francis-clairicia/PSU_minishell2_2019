@@ -25,23 +25,32 @@ static void remove_others_args(char **command, int start, int nb_deleted)
     }
 }
 
-void create_arg(char **command, int first, int last, char quote)
+static int get_size_new_arg(char **command, int first, int last)
 {
-    int first_q_i = my_strchr_index(command[first], quote);
-    int last_q_i = my_strchr_index(command[last], quote);
-    int size_arg = my_strlen(&(command[first][first_q_i + 1])) + last_q_i + 2;
+    int size = 0;
+    int i = 0;
+
+    size += my_strlen(command[first]) + 1;
+    for (i = first + 1; i != last; i += 1)
+        size += my_strlen(command[i]) + 1;
+    size += my_strlen(command[last]);
+    return (size);
+}
+
+bool create_arg(char **command, int first, int last)
+{
+    int size_arg = get_size_new_arg(command, first, last);
     char *arg = NULL;
     int i = 0;
 
-    for (i = first + 1; i != last; i += 1)
-        size_arg += my_strlen(command[i]) + 1;
     arg = my_memset(malloc(sizeof(char) * (size_arg + 1)), '\0', size_arg + 1);
     if (arg == NULL)
-        return;
-    my_strcat(my_strcat(arg, &(command[first][first_q_i + 1])), " ");
+        return (false);
+    my_strcat(my_strcat(arg, command[first]), " ");
     for (i = first + 1; i != last; i += 1)
         my_strcat(my_strcat(arg, command[i]), " ");
     free(command[first]);
-    command[first] = my_strncat(arg, command[last], last_q_i);
+    command[first] = my_strcat(arg, command[last]);
     remove_others_args(command, first + 1, last - first);
+    return (true);
 }
