@@ -12,16 +12,20 @@ static bool valid_pipes(char const *line, char * const *commands)
     int nb_commands = my_array_len(commands);
     int nb_pipes = 0;
     int index = 0;
+    bool status = true;
 
     while ((index = get_character_index(line, '|')) != -1) {
         nb_pipes += 1;
         line = &line[index + 1];
     }
-    for (index = 0; commands[index] != NULL; index += 1) {
+    status = (nb_commands == (nb_pipes + 1));
+    for (index = 0; status == true && commands[index] != NULL; index += 1) {
         if (my_str_contains_only(commands[index], " \t"))
-            return (false);
+            status = false;
     }
-    return (nb_commands == (nb_pipes + 1));
+    if (status == false)
+        my_putstr_error("Invalid null command.\n");
+    return (status);
 }
 
 static bool check_stdin_redirection(char * const *commands, int index)
