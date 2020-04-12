@@ -32,8 +32,8 @@ static int here_document_command(char const *end)
 
     if (pipe(pipefd) != 0)
         return (-1);
-    while (my_putstr("? ") &&
-    get_next_line(&line, 0) && my_strcmp(line, end) != 0) {
+    while (my_putstr("? ")
+    && get_next_line(&line, 0) && my_strcmp(line, end) != 0) {
         my_putstr_fd(pipefd[1], line);
         my_putstr_fd(pipefd[1], "\n");
     }
@@ -56,7 +56,7 @@ int get_input_fd(char *line)
 {
     char chevrons[2] = {'<', '>'};
     char file[256];
-    int chevron = my_strchr_index(line, chevrons[0]);
+    int chevron = get_character_index(line, chevrons[0]);
     bool here_document = false;
 
     if (chevron < 0)
@@ -76,7 +76,7 @@ int get_output_fd(char *line)
 {
     char chevrons[2] = {'>', '<'};
     char file[256];
-    int chevron = my_strchr_index(line, chevrons[0]);
+    int chevron = get_character_index(line, chevrons[0]);
     int flags = O_CREAT | O_WRONLY;
 
     if (chevron < 0)

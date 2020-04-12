@@ -17,10 +17,10 @@
 #include <errno.h>
 #include <unistd.h>
 #include "my.h"
+#include "mylist.h"
 
 int kill(pid_t pid, int sig);
 
-typedef int (*builtin_function_t)(char * const *argv, char ***envp);
 typedef __sighandler_t sighandler_t;
 
 #define DEFAULT_ENVIRONMENT __environ
@@ -33,12 +33,6 @@ enum SIGINT_HANDLER_FUNCTION
 {
     PROMPT,
     PROCESS
-};
-
-struct builtin
-{
-    char const *command;
-    builtin_function_t function;
 };
 
 typedef struct command_line
@@ -59,20 +53,30 @@ char *find_binary_in_path(char const *binary, char * const *envp);
 int find_var_env(char * const *envp, char const *var);
 char *get_var_value(char * const *envp, int index);
 char *create_variable(char const *variable, char const *value);
-builtin_function_t is_builtin(char * const *cmd);
 
+char **parse_input(char const *input, char const separators[], bool remove);
+command_t init_command_struct(void);
+void destroy_command(command_t *command);
 command_t parse_command_line(char const *command_line);
 int get_input_fd(char *line);
 int get_output_fd(char *line);
+int get_character_index(char const *line, char character);
 bool check_redirection_validity(char const *line);
-bool remove_quotes(char **command, int arg, char quote);
-bool create_arg(char **command, int first, int last);
 
-int cd_builtin_command(char * const *av, char ***envp);
-int env_builtin_command(char * const *av, char ***envp);
-int exit_builtin_command(char * const *av, char ***envp);
-int setenv_builtin_command(char * const *av, char ***envp);
-int unsetenv_builtin_command( char * const *av, char ***envp);
+typedef int (*builtin_function_t)(char * const *av, char ***envp, int output);
+
+struct builtin
+{
+    char const *command;
+    builtin_function_t function;
+};
+
+builtin_function_t is_builtin(char * const *cmd);
+int cd_builtin_command(char * const *av, char ***envp, int output_fd);
+int env_builtin_command(char * const *av, char ***envp, int output_fd);
+int exit_builtin_command(char * const *av, char ***envp, int output_fd);
+int setenv_builtin_command(char * const *av, char ***envp, int output_fd);
+int unsetenv_builtin_command( char * const *av, char ***envp, int output_fd);
 
 sighandler_t bind_sigint_signal(int func);
 void sigint_handler_for_prompt(int signum);

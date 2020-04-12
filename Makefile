@@ -28,8 +28,8 @@ SRC_TEST			=	src/minishell.c						\
 						src/parsing/parse_command_line.c	\
 						src/parsing/change_fd.c				\
 						src/parsing/check_line_validity.c	\
-						src/parsing/create_arg.c			\
-						src/parsing/remove_quotes.c
+						src/parsing/get_character_index.c	\
+						src/parsing/parse_input.c
 
 SRC					=	$(SRC_NO_TEST) $(SRC_TEST)
 

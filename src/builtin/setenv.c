@@ -31,11 +31,8 @@ static int add_variable(char ***envp, char const *variable, char const *value)
     int i = 0;
     char **new_envp = malloc(sizeof(char *) * (my_array_len(*envp) + 2));
 
-    if (new_envp == NULL) {
-        free(*envp);
-        *envp = NULL;
+    if (new_envp == NULL)
         return (-1);
-    }
     if ((*envp) != NULL) {
         while ((*envp)[i] != NULL) {
             new_envp[i] = (*envp)[i];
@@ -49,13 +46,13 @@ static int add_variable(char ***envp, char const *variable, char const *value)
     return (0);
 }
 
-int setenv_builtin_command(char * const *av, char ***envp)
+int setenv_builtin_command(char * const *av, char ***envp, int output_fd)
 {
     int ac = my_array_len(av);
     int var_index = 0;
 
     if (ac < 2)
-        return (env_builtin_command((char *[]){"env", NULL}, envp));
+        return (env_builtin_command((char *[]){"env", NULL}, envp, output_fd));
     else if (ac > 3) {
         print_error("setenv", "Too many arguments");
         return (-1);

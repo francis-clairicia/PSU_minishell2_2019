@@ -5,18 +5,7 @@
 ** exec_piped_commands.c
 */
 
-#include <stdio.h>
 #include "minishell.h"
-
-static int occurence_in_str(char const *str, char c)
-{
-    int i = 0;
-    int count = 0;
-
-    for (i = 0; str[i] != '\0'; i += 1)
-        count += (str[i] == c);
-    return (count);
-}
 
 static bool link_all_commands(command_t commands[], int nb_commands)
 {
@@ -32,60 +21,46 @@ static bool link_all_commands(command_t commands[], int nb_commands)
     return (true);
 }
 
-static void destroy_command(command_t command)
-{
-    if (command.input_fd != 0 && command.input_fd != -1)
-        close(command.input_fd);
-    if (command.output_fd != 1 && command.output_fd != 2
-    && command.output_fd != -1)
-        close(command.output_fd);
-    my_free_array(command.argv);
-}
-
 static bool init_commands(command_t commands[], char * const *piped_commands)
 {
     int i = 0;
-    int nb_init = 0;
     bool status = true;
 
-    for (i = 0; piped_commands[i] != NULL; i += 1) {
+    for (i = 0; piped_commands[i] != NULL; i += 1)
+        commands[i] = init_command_struct();
+    for (i = 0; status == true && piped_commands[i] != NULL; i += 1) {
         commands[i] = parse_command_line(piped_commands[i]);
-        if (commands[i].argv == NULL) {
-            my_putstr_error("Invalid null command.\n");
-            status = false;
-        }
+        status &= (commands[i].argv != NULL);
         status &= (commands[i].input_fd >= 0 && commands[i].output_fd >= 1);
-        if (status == false)
-            break;
-    }
-    if (status == false) {
-        nb_init = i;
-        for (i = 0; i <= nb_init; i += 1)
-            destroy_command(commands[i]);
     }
     return (status);
 }
 
+static void destroy_all_commands(command_t commands[], int nb_commands)
+{
+    int i = 0;
+
+    for (i = 0; i < nb_commands; i += 1)
+        destroy_command(&commands[i]);
+}
+
 int exec_piped_commands(char const *command_line, char ***envp)
 {
-    char **piped_commands = my_str_to_word_array(command_line, "|");
+    char **piped_commands = parse_input(command_line, "|", false);
     int nb_commands = my_array_len(piped_commands);
     command_t commands[(nb_commands == 0) ? 1 : nb_commands];
     int i = 0;
     int status = 0;
 
-    if (nb_commands <= occurence_in_str(command_line, '|')) {
-        my_putstr_error("Invalid null command.\n");
-        status = -1;
-    }
     if (status == 0 && !init_commands(commands, piped_commands))
         status = -1;
     if (status == 0 && !link_all_commands(commands, nb_commands))
         status = -1;
     for (i = 0; i < nb_commands && status == 0; i += 1) {
         status = exec_shell_command(commands[i], envp);
-        destroy_command(commands[i]);
+        destroy_command(&commands[i]);
     }
     my_free_array(piped_commands);
+    destroy_all_commands(commands, nb_commands);
     return (status);
 }

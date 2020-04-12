@@ -7,10 +7,10 @@
 
 #include "mylist.h"
 
-static void delete_first_node(list_t **list, int free_ptr)
+static void delete_first_node(list_t **list, void (*free_function)())
 {
     if ((*list)->next == NULL) {
-        my_free_list(list, free_ptr);
+        my_free_list(list, free_function);
         return;
     }
     (*list)->next->previous = (*list)->previous;
@@ -37,14 +37,14 @@ static void delete_last_node(list_t **list)
     previous_of_last_node->next = NULL;
 }
 
-void my_delete_node(list_t **list, int i, int free_ptr)
+void my_delete_node(list_t **list, int i, void (*free_function)())
 {
     list_t *node = my_node(*list, i);
 
     if (node == NULL)
         return;
     if (node == *list) {
-        delete_first_node(list, free_ptr);
+        delete_first_node(list, free_function);
         if (*list == NULL)
             return;
     } else if (node == (*list)->previous){
@@ -53,5 +53,5 @@ void my_delete_node(list_t **list, int i, int free_ptr)
         delete_middle_node(node);
     }
     node->next = NULL;
-    my_free_list(&node, free_ptr);
+    my_free_list(&node, free_function);
 }

@@ -7,8 +7,9 @@
 
 #include "minishell.h"
 
-int exit_builtin_command(char * const *av UNUSED, char ***envp UNUSED)
+int exit_builtin_command(char * const *av UNUSED, char ***envp UNUSED,
+    int output_fd)
 {
-    my_putstr("exit\n");
+    my_putstr_fd(output_fd, "exit\n");
     return (1);
 }

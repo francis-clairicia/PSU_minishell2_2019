@@ -7,48 +7,15 @@
 
 #include "minishell.h"
 
-static bool unify_args(char **command, int arg, char quote)
-{
-    char *actual_arg = command[arg];
-    int quote_index = my_strchr_index(actual_arg, quote);
-    int other_quote = arg + 1;
-
-    if (my_strchr_index(&actual_arg[quote_index + 1], quote) >= 0)
-        return (remove_quotes(command, arg, quote));
-    while (command[other_quote] != NULL) {
-        if (my_strchr_index(command[other_quote], quote) >= 0)
-            return (create_arg(command, arg, other_quote));
-        other_quote += 1;
-    }
-    my_putstr_error("Unmatched '");
-    write(2, &quote, 1);
-    my_putstr_error("'.\n");
-    return (false);
-}
-
 static char **get_argv(char const *command_line)
 {
-    int i = 0;
     char separators[] = {' ', '\t', '\0'};
-    char **command = my_str_to_word_array(command_line, separators);
-    bool error = false;
+    char **command = parse_input(command_line, separators, true);
 
-    if (command == NULL)
-        return (NULL);
-    while (!error && command[i] != NULL) {
-        if (my_strchr_index(command[i], '\'') >= 0)
-            error = !unify_args(command, i, '\'');
-        else if (my_strchr_index(command[i], '"') >= 0)
-            error = !unify_args(command, i, '"');
-        else
-            i += 1;
-    }
-    if (error)
-        my_free_array(command);
-    return ((error) ? (NULL) : (command));
+    return (command);
 }
 
-static command_t init_command_struct(void)
+command_t init_command_struct(void)
 {
     command_t cmd;
 
@@ -65,8 +32,22 @@ command_t parse_command_line(char const *command_line)
 
     my_strcpy(line_copy, command_line);
     cmd.input_fd = get_input_fd(line_copy);
-    if (cmd.input_fd >= 0)
-        cmd.output_fd = get_output_fd(line_copy);
+    cmd.output_fd = get_output_fd(line_copy);
     cmd.argv = get_argv(line_copy);
     return (cmd);
+}
+
+void destroy_command(command_t *command)
+{
+    if (command->input_fd != 0 && command->input_fd != -1) {
+        close(command->input_fd);
+        command->input_fd = 0;
+    }
+    if (command->output_fd != 1 && command->output_fd != 2
+    && command->output_fd != -1) {
+        close(command->output_fd);
+        command->output_fd = 1;
+    }
+    my_free_array(command->argv);
+    command->argv = NULL;
 }

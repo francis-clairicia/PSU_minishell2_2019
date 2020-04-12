@@ -16,7 +16,7 @@ static void increase_shlvl(char ***envp)
     if (actual_value == NULL)
         return;
     setenv_cmd[2] = my_nbr_to_str(new_value);
-    setenv_builtin_command(setenv_cmd, envp);
+    setenv_builtin_command(setenv_cmd, envp, 1);
     free(setenv_cmd[2]);
 }
 
@@ -24,9 +24,7 @@ static int command_prompt(char **line, int stop_shell)
 {
     char current_directory[4097];
 
-    if (stop_shell < 0)
-        stop_shell = 0;
-    else if (stop_shell) {
+    if (stop_shell == 1) {
         if (*line != NULL)
             free(*line);
         return (0);
@@ -36,7 +34,7 @@ static int command_prompt(char **line, int stop_shell)
     if (!get_next_line(line, 0))
         *line = my_strdup("exit");
     if (my_strlen(*line) == 0)
-        return (command_prompt(line, -1));
+        return (command_prompt(line, 0));
     return (1);
 }
 
@@ -49,11 +47,8 @@ int mysh(void)
     if (envp == NULL)
         return (84);
     increase_shlvl(&envp);
-    while (command_prompt(&cmd, stop_shell)) {
+    while (command_prompt(&cmd, stop_shell))
         stop_shell = minishell(cmd, &envp);
-        if (envp == NULL)
-            stop_shell = 1;
-    }
     my_free_array(envp);
     return (0);
 }

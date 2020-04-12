@@ -12,14 +12,14 @@ int minishell(char const *command_line, char ***envp)
     int i = 0;
     int status = 0;
     int error = 0;
-    char **command = my_str_to_word_array(command_line, ";");
+    char **command = parse_input(command_line, ";", false);
 
     if (command == NULL)
         return (1);
     for (i = 0; status <= 0 && command[i] != NULL; i += 1) {
         if (my_str_contains_only(command[i], " \t"))
             continue;
-        if (check_redirection_validity(command[i]))
+        if (check_redirection_validity(command[i]) == true)
             status = exec_piped_commands(command[i], envp);
         else
             status = -1;

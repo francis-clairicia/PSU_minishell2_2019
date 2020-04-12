@@ -40,3 +40,17 @@ list_t *my_node(list_t *begin, int index)
         return (search_node_by_end(begin->previous, index));
     return (search_node_by_beginning(begin, index));
 }
+
+list_t *my_node_from_data(list_t *begin, long data, int *index)
+{
+    int i = 0;
+    list_t *node = NULL;
+
+    if (begin == NULL)
+        return (NULL);
+    for (node = begin; node != NULL && node->data != data; node = node->next)
+        i += 1;
+    if (index != NULL && node != NULL)
+        *index = i;
+    return (node);
+}

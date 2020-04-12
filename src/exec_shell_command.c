@@ -52,7 +52,7 @@ int exec_shell_command(command_t command, char ***envp)
     }
     builtin = is_builtin(command.argv);
     if (builtin != NULL) {
-        status = builtin(command.argv, envp);
+        status = builtin(command.argv, envp, command.output_fd);
     } else {
         path_to_executable = get_path_to_executable(command.argv[0], *envp);
         bind_sigint_signal(PROCESS);
