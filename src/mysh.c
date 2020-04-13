@@ -38,6 +38,19 @@ static int command_prompt(char **line, int stop_shell)
     return (1);
 }
 
+static int launch_given_commands(char ***envp)
+{
+    char *cmd = NULL;
+    int stop_shell = 0;
+
+    while (stop_shell <= 0 && get_next_line(&cmd, 0))
+        stop_shell = minishell(cmd, envp);
+    if (cmd != NULL)
+        free(cmd);
+    my_free_array(*envp);
+    return (0);
+}
+
 int mysh(void)
 {
     char *cmd = NULL;
@@ -46,6 +59,8 @@ int mysh(void)
 
     if (envp == NULL)
         return (84);
+    if (!isatty(0))
+        return (launch_given_commands(&envp));
     increase_shlvl(&envp);
     while (command_prompt(&cmd, stop_shell))
         stop_shell = minishell(cmd, &envp);
