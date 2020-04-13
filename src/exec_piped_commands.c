@@ -57,7 +57,8 @@ int exec_piped_commands(char const *command_line, char ***envp)
     if (status == 0 && !link_all_commands(commands, nb_commands))
         status = -1;
     for (i = 0; i < nb_commands && status == 0; i += 1) {
-        status = exec_shell_command(commands[i], envp);
+        if (!(!my_strcmp(commands[i].argv[0], "exit") && i + 1 != nb_commands))
+            status = exec_shell_command(commands[i], envp);
         destroy_command(&commands[i]);
     }
     my_free_array(piped_commands);

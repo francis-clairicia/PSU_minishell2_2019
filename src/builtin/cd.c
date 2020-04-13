@@ -20,7 +20,7 @@ static int go_to_default_home_path(char * const *envp)
     return (1);
 }
 
-static int go_to_old_directory(char * const *envp, int fd)
+static int go_to_old_directory(char * const *envp)
 {
     char *old_pwd = get_var_value(envp, find_var_env(envp, "OLDPWD"));
 
@@ -32,15 +32,13 @@ static int go_to_old_directory(char * const *envp, int fd)
         print_error(old_pwd, strerror(errno));
         return (0);
     }
-    my_putstr_fd(fd, old_pwd);
-    my_putstr_fd(fd, "\n");
     return (1);
 }
 
-static int change_directory(char const *arg, char * const *envp, int fd)
+static int change_directory(char const *arg, char * const *envp)
 {
     if (my_strcmp(arg, "-") == 0)
-        return (go_to_old_directory(envp, fd));
+        return (go_to_old_directory(envp));
     if (chdir(arg) < 0) {
         print_error(arg, strerror(errno));
         return (0);
@@ -63,7 +61,7 @@ int cd_builtin_command(char * const *av, char ***envp, int output_fd)
         return (-1);
     if (ac == 1 && !go_to_default_home_path(*envp))
         return (-1);
-    if (ac > 1 && !change_directory(av[1], *envp, output_fd))
+    if (ac > 1 && !change_directory(av[1], *envp))
         return (-1);
     setenv_builtin_command(set_old_pwd, envp, output_fd);
     getcwd(actual_dir, 4097);

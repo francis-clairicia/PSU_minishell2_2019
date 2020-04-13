@@ -34,7 +34,7 @@ static int launch_process(char const *binary, command_t command,
         dup2(command.output_fd, 1);
         if (execve(binary, command.argv, envp) < 0)
             print_error(command.argv[0], error_exec(errno));
-        return (1);
+        exit(0);
     }
     waitpid(child_pid, &wstatus, 0);
     return (handle_status(wstatus));
