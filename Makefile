@@ -59,7 +59,7 @@ tests_run:	LDLIBS += -lcriterion
 tests_run:	$(LDLIBS)
 	@find -name "*.gc*" -delete
 	$(CC) -o unit_tests $(SRC_TEST) tests/*.c $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(LDLIBS)
-	./unit_tests
+	-./unit_tests
 	$(RM) unit_tests test*.gc*
 	mkdir -p coverage
 	mv *.gc* coverage/

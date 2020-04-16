@@ -59,7 +59,7 @@ int mysh(void)
 
     if (envp == NULL)
         return (84);
-    unsetenv_builtin_command((char *[]){"unsetenv", "OLDPWD"}, &envp, 1);
+    unsetenv_builtin_command((char *[]){"unsetenv", "OLDPWD", NULL}, &envp, 1);
     if (!isatty(0))
         return (launch_given_commands(&envp));
     increase_shlvl(&envp);
