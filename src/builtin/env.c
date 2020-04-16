@@ -7,7 +7,7 @@
 
 #include "minishell.h"
 
-int env_builtin_command(char * const *av, char ***envp, int output_fd)
+int env_builtin_command(char * const *av, char ***envp)
 {
     int ac = my_array_len(av);
     int i = 0;
@@ -19,8 +19,7 @@ int env_builtin_command(char * const *av, char ***envp, int output_fd)
     if (envp == NULL || *envp == NULL)
         return (-1);
     while ((*envp)[i] != NULL) {
-        my_putstr_fd(output_fd, (*envp)[i]);
-        my_putstr_fd(output_fd, "\n");
+        my_printf("%s\n", (*envp)[i]);
         i += 1;
     }
     return (0);

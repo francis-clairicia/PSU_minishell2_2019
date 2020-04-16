@@ -46,13 +46,13 @@ static int add_variable(char ***envp, char const *variable, char const *value)
     return (0);
 }
 
-int setenv_builtin_command(char * const *av, char ***envp, int output_fd)
+int setenv_builtin_command(char * const *av, char ***envp)
 {
     int ac = my_array_len(av);
     int var_index = 0;
 
     if (ac < 2)
-        return (env_builtin_command((char *[]){"env", NULL}, envp, output_fd));
+        return (env_builtin_command((char *[]){"env", NULL}, envp));
     else if (ac > 3) {
         print_error("setenv", "Too many arguments");
         return (-1);

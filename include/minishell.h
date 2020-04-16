@@ -63,7 +63,7 @@ int get_output_fd(char *line);
 int get_character_index(char const *line, char character);
 bool check_redirection_validity(char const *line);
 
-typedef int (*builtin_function_t)(char * const *av, char ***envp, int output);
+typedef int (*builtin_function_t)(char * const *av, char ***envp);
 
 struct builtin
 {
@@ -72,11 +72,11 @@ struct builtin
 };
 
 builtin_function_t is_builtin(char * const *cmd);
-int cd_builtin_command(char * const *av, char ***envp, int output_fd);
-int env_builtin_command(char * const *av, char ***envp, int output_fd);
-int exit_builtin_command(char * const *av, char ***envp, int output_fd);
-int setenv_builtin_command(char * const *av, char ***envp, int output_fd);
-int unsetenv_builtin_command( char * const *av, char ***envp, int output_fd);
+int cd_builtin_command(char * const *av, char ***envp);
+int env_builtin_command(char * const *av, char ***envp);
+int exit_builtin_command(char * const *av, char ***envp);
+int setenv_builtin_command(char * const *av, char ***envp);
+int unsetenv_builtin_command( char * const *av, char ***envp);
 
 sighandler_t bind_sigint_signal(int func);
 void sigint_handler_for_prompt(int signum);

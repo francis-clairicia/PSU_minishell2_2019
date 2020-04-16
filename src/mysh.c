@@ -16,7 +16,7 @@ static void increase_shlvl(char ***envp)
     if (actual_value == NULL)
         return;
     setenv_cmd[2] = my_nbr_to_str(new_value);
-    setenv_builtin_command(setenv_cmd, envp, 1);
+    setenv_builtin_command(setenv_cmd, envp);
     free(setenv_cmd[2]);
 }
 
@@ -59,7 +59,7 @@ int mysh(void)
 
     if (envp == NULL)
         return (84);
-    unsetenv_builtin_command((char *[]){"unsetenv", "OLDPWD", NULL}, &envp, 1);
+    unsetenv_builtin_command((char *[]){"unsetenv", "OLDPWD", NULL}, &envp);
     if (!isatty(0))
         return (launch_given_commands(&envp));
     increase_shlvl(&envp);

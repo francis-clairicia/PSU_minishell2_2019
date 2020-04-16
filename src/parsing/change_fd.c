@@ -60,7 +60,7 @@ int get_input_fd(char *line)
     bool here_document = false;
 
     if (chevron < 0)
-        return (0);
+        return (STDIN_FILENO);
     here_document = (line[chevron + 1] == chevrons[0]);
     get_file(file, line, chevron, chevrons);
     if (my_strlen(file) == 0) {
@@ -80,7 +80,7 @@ int get_output_fd(char *line)
     int flags = O_CREAT | O_WRONLY;
 
     if (chevron < 0)
-        return (1);
+        return (STDOUT_FILENO);
     flags |= ((line[chevron + 1] == chevrons[0]) ? (O_APPEND) : (O_TRUNC));
     get_file(file, line, chevron, chevrons);
     if (my_strlen(file) == 0) {

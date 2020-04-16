@@ -46,7 +46,7 @@ static int change_directory(char const *arg, char * const *envp)
     return (1);
 }
 
-int cd_builtin_command(char * const *av, char ***envp, int output_fd)
+int cd_builtin_command(char * const *av, char ***envp)
 {
     int ac = my_array_len(av);
     char actual_dir[4097];
@@ -63,8 +63,8 @@ int cd_builtin_command(char * const *av, char ***envp, int output_fd)
         return (-1);
     if (ac > 1 && !change_directory(av[1], *envp))
         return (-1);
-    setenv_builtin_command(set_old_pwd, envp, output_fd);
+    setenv_builtin_command(set_old_pwd, envp);
     getcwd(actual_dir, 4097);
-    setenv_builtin_command(set_new_pwd, envp, output_fd);
+    setenv_builtin_command(set_new_pwd, envp);
     return (0);
 }

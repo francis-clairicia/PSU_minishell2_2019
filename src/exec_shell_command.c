@@ -30,14 +30,29 @@ static int launch_process(char const *binary, command_t command,
         return (-1);
     child_pid = fork();
     if (child_pid == 0) {
-        dup2(command.input_fd, 0);
-        dup2(command.output_fd, 1);
+        dup2(command.input_fd, STDIN_FILENO);
+        dup2(command.output_fd, STDOUT_FILENO);
         if (execve(binary, command.argv, envp) < 0)
             print_error(command.argv[0], error_exec(errno));
         exit(0);
     }
     waitpid(child_pid, &wstatus, 0);
     return (handle_status(wstatus));
+}
+
+static int launch_builtin(builtin_function_t builtin,
+    command_t command, char ***envp)
+{
+    int save_stdin = dup(STDIN_FILENO);
+    int save_stdout = dup(STDOUT_FILENO);
+    int status = 0;
+
+    dup2(command.input_fd, STDIN_FILENO);
+    dup2(command.output_fd, STDOUT_FILENO);
+    status = builtin(command.argv, envp);
+    dup2(save_stdin, STDIN_FILENO);
+    dup2(save_stdout, STDOUT_FILENO);
+    return (status);
 }
 
 int exec_shell_command(command_t command, char ***envp)
@@ -52,7 +67,7 @@ int exec_shell_command(command_t command, char ***envp)
     }
     builtin = is_builtin(command.argv);
     if (builtin != NULL) {
-        status = builtin(command.argv, envp, command.output_fd);
+        status = launch_builtin(builtin, command, envp);
     } else {
         path_to_executable = get_path_to_executable(command.argv[0], *envp);
         bind_sigint_signal(PROCESS);
