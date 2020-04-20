@@ -9,10 +9,7 @@
 
 void print_error(char const *filepath, char const *error)
 {
-    my_putstr_error(filepath);
-    my_putstr_error(": ");
-    my_putstr_error(error);
-    my_putstr_error(".\n");
+    my_dprintf(2, "%s: %s.\n", filepath, error);
 }
 
 char *error_exec(int errnum)

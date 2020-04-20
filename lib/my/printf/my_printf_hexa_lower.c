@@ -7,9 +7,9 @@
 
 #include "my_printf.h"
 
-int print_hexa_lower(va_list *args, modifier_t *infos)
+int print_hexa_lower(va_list args, modifier_t *infos)
 {
-    unsigned long nb = va_arg(*args, unsigned long);
+    unsigned long nb = va_arg(args, unsigned long);
     char *l_mod = infos->length_modifier;
     char base[] = "0123456789abcdef";
 

@@ -7,9 +7,9 @@
 
 #include "my_printf.h"
 
-int print_number(va_list *args, modifier_t *infos)
+int print_number(va_list args, modifier_t *infos)
 {
-    long nb = va_arg(*args, long);
+    long nb = va_arg(args, long);
     char *l_mod = infos->length_modifier;
 
     if (my_strcmp(l_mod, "ll") == 0 || my_strcmp(l_mod, "l") == 0

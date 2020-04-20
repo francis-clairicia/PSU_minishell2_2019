@@ -10,6 +10,7 @@
 
 #include <sys/types.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 #define UNUSED __attribute__((unused))
 
@@ -24,8 +25,8 @@ int my_strlen(char const *str);
 int my_getnbr(char const *str);
 int my_getnbr_base(char const *str, char const *base);
 void my_sort_int_array(int *array, int size);
-int my_compute_power_rec(int nb, int p);
-int my_compute_square_root(int nb);
+int my_pow(int nb, int p);
+int my_sqrt(int nb);
 int my_is_prime(int nb);
 int my_find_prime_sup(int nb);
 char **my_str_to_word_array(char const *str, char const *separators);
@@ -60,6 +61,8 @@ char *my_strdup_char(char c);
 char *my_nbr_to_str(int nb);
 int my_nbr_len(long nb);
 int my_printf(char const *format, ...);
+int my_dprintf(int fd, char const *format, ...);
+int my_vprintf(char const *format, va_list ap);
 char *my_strchr(char *str, int c);
 int my_strchr_index(char const *str, int c);
 char *convert_base(char const *nbr, char const *base_from, char const *base_to);

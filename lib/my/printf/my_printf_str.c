@@ -25,10 +25,10 @@ static int get_str_size(char const *str)
     return (len);
 }
 
-int print_char(va_list *args, modifier_t *infos)
+int print_char(va_list args, modifier_t *infos)
 {
     int len = 0;
-    unsigned char c = va_arg(*args, int);
+    unsigned char c = va_arg(args, int);
 
     len += print_before(infos, 1);
     len += write(1, &c, 1);
@@ -36,10 +36,10 @@ int print_char(va_list *args, modifier_t *infos)
     return (len);
 }
 
-int print_str(va_list *args, modifier_t *infos)
+int print_str(va_list args, modifier_t *infos)
 {
     int len = 0;
-    char *str = va_arg(*args, char *);
+    char *str = va_arg(args, char *);
     int size = get_str_size(str);
 
     len += print_before(infos, size);
@@ -48,9 +48,9 @@ int print_str(va_list *args, modifier_t *infos)
     return (size + len);
 }
 
-int print_str_non_printable(va_list *args, modifier_t *infos)
+int print_str_non_printable(va_list args, modifier_t *infos)
 {
-    char *str = va_arg(*args, char *);
+    char *str = va_arg(args, char *);
     int len = 0;
     int i = 0;
     int size = get_str_size(str);

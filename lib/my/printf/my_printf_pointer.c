@@ -7,9 +7,9 @@
 
 #include "my_printf.h"
 
-int print_pointer(va_list *args, modifier_t *infos)
+int print_pointer(va_list args, modifier_t *infos)
 {
-    unsigned long nb = va_arg(*args, unsigned long);
+    unsigned long nb = va_arg(args, unsigned long);
     int len = 0;
 
     len += print_before(infos, my_nbr_len_u(nb));

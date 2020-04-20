@@ -21,7 +21,7 @@ static const flag_t flag_list[] = {
     {NULL, NULL}
 };
 
-static int print_replacing_flag(char type, char *modifiers, va_list *args)
+static int print_replacing_flag(char type, char *modifiers, va_list args)
 {
     int i = 0;
     int len = 0;
@@ -42,7 +42,7 @@ static int print_replacing_flag(char type, char *modifiers, va_list *args)
     return (len);
 }
 
-static int my_printf_part2(char const *format, int *i, va_list *args)
+static int my_printf_part2(char const *format, int *i, va_list args)
 {
     char *modifiers = NULL;
     int index_save = *i;
@@ -60,23 +60,31 @@ static int my_printf_part2(char const *format, int *i, va_list *args)
     return (n);
 }
 
-int my_printf(char const *format, ...)
+int my_vprintf(char const *format, va_list args)
 {
-    va_list args;
     int i = 0;
     int nb_print = 0;
 
-    va_start(args, format);
     while (format[i] != '\0') {
         if (format[i] != '%') {
             my_putchar(format[i]);
             nb_print += 1;
         } else {
             i += 1;
-            nb_print += my_printf_part2(format, &i, &args);
+            nb_print += my_printf_part2(format, &i, args);
         }
         i += 1;
     }
+    return (nb_print);
+}
+
+int my_printf(char const *format, ...)
+{
+    va_list args;
+    int nb_print = 0;
+
+    va_start(args, format);
+    nb_print = my_vprintf(format, args);
     va_end(args);
     return (nb_print);
 }

@@ -5,7 +5,7 @@
 ** Returns the power of a number
 */
 
-int my_compute_power_rec(int nb, int p)
+int my_pow(int nb, int p)
 {
     int power_down = 0;
 
@@ -13,7 +13,7 @@ int my_compute_power_rec(int nb, int p)
         return (0);
     if (p == 0)
         return (1);
-    power_down = my_compute_power_rec(nb, p - 1);
+    power_down = my_pow(nb, p - 1);
     if (power_down == 0)
         return (0);
     if (nb > 0 && nb > 2147483647 / power_down)

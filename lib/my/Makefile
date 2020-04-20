@@ -70,6 +70,7 @@ LINKED_LIST	=	my_put_in_list.c			\
 				my_delete_node_from.c
 
 PRINTF		=	printf/my_printf.c					\
+				printf/my_dprintf.c					\
 				printf/my_printf_number.c			\
 				printf/my_printf_str.c				\
 				printf/my_printf_pointer.c			\
