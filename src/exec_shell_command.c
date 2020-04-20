@@ -56,15 +56,15 @@ static int launch_builtin(builtin_function_t builtin,
         while (get_next_line(&line, command->input_fd));
         free(line);
     }
-    if (builtin == &exit_builtin_command && command->output_fd != STDOUT_FILENO)
-        return (0);
-    save_stdout = dup(STDOUT_FILENO);
-    dup2(command->output_fd, STDOUT_FILENO);
-    status = builtin(command->argv, envp);
-    dup2(save_stdout, STDOUT_FILENO);
+    if (!(builtin == &exit_builtin_command && commands[1].argv != NULL)) {
+        save_stdout = dup(STDOUT_FILENO);
+        dup2(command->output_fd, STDOUT_FILENO);
+        status = builtin(command->argv, envp);
+        dup2(save_stdout, STDOUT_FILENO);
+    }
+    destroy_command(command);
     if (commands[1].argv != NULL)
         exec_shell_command(&commands[1], envp);
-    destroy_command(command);
     return (status);
 }
 
