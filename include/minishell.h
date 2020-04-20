@@ -44,7 +44,7 @@ typedef struct command_line
 
 int mysh(void);
 int minishell(char const *command_line, char ***envp);
-int exec_shell_command(command_t command, char ***envp);
+int exec_shell_command(command_t commands[], char ***envp);
 int exec_piped_commands(char const *command_line, char ***envp);
 void print_command_prompt(char const *cwd, char * const *envp);
 char *get_path_to_executable(char const *binary, char * const *envp);
