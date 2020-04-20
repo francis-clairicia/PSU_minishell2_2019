@@ -36,6 +36,14 @@ static bool init_commands(command_t commands[], char * const *piped_commands)
     return (status);
 }
 
+static void destroy_all_commands(command_t commands[], int nb_commands)
+{
+    int i = 0;
+
+    for (i = 0; i < nb_commands; i += 1)
+        destroy_command(&commands[i]);
+}
+
 int exec_piped_commands(char const *command_line, char ***envp)
 {
     char **piped_commands = parse_input(command_line, "|", false);
@@ -48,7 +56,9 @@ int exec_piped_commands(char const *command_line, char ***envp)
         status = -1;
     if (status == 0 && !link_all_commands(commands, nb_commands))
         status = -1;
-    status = exec_shell_command(commands, envp);
+    if (status == 0)
+        status = exec_shell_command(commands, envp);
+    destroy_all_commands(commands, nb_commands);
     my_free_array(piped_commands);
     return (status);
 }
