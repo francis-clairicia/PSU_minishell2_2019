@@ -2,13 +2,13 @@
 ** EPITECH PROJECT, 2019
 ** PSU_minishell1_2019
 ** File description:
-** exec_shell_command.c
+** exec_shell_commands.c
 */
 
 #include <string.h>
 #include "minishell.h"
 
-static int handle_status(int wstatus)
+static int handle_status(int wstatus, int status_pipe)
 {
     if (WIFSIGNALED(wstatus)) {
         if (WTERMSIG(wstatus) != SIGINT) {
@@ -17,13 +17,14 @@ static int handle_status(int wstatus)
         }
         my_putstr_error("\n");
     }
-    return (0);
+    return (status_pipe);
 }
 
 static int launch_process(char const *binary, command_t commands[],
     char ***envp)
 {
     int wstatus = 0;
+    int status_pipe = 0;
     int child_pid = 0;
     command_t *command = &commands[0];
 
@@ -39,9 +40,9 @@ static int launch_process(char const *binary, command_t commands[],
     }
     destroy_command(command);
     if (commands[1].argv != NULL)
-        exec_shell_command(&commands[1], envp);
+        status_pipe = exec_shell_commands(&commands[1], envp);
     waitpid(child_pid, &wstatus, 0);
-    return (handle_status(wstatus));
+    return (handle_status(wstatus, status_pipe));
 }
 
 static int launch_builtin(builtin_function_t builtin,
@@ -51,11 +52,10 @@ static int launch_builtin(builtin_function_t builtin,
     command_t *command = &commands[0];
     int save_stdout = 0;
     int status = 0;
+    int status_pipe = 0;
 
-    if (command->input_fd != STDIN_FILENO) {
-        while (get_next_line(&line, command->input_fd));
-        free(line);
-    }
+    while (command->input_fd != 0 && get_next_line(&line, command->input_fd));
+    free(line);
     if (!(builtin == &exit_builtin_command && commands[1].argv != NULL)) {
         save_stdout = dup(STDOUT_FILENO);
         dup2(command->output_fd, STDOUT_FILENO);
@@ -64,11 +64,11 @@ static int launch_builtin(builtin_function_t builtin,
     }
     destroy_command(command);
     if (commands[1].argv != NULL)
-        exec_shell_command(&commands[1], envp);
-    return (status);
+        status_pipe = exec_shell_commands(&commands[1], envp);
+    return ((status_pipe != 0) ? status_pipe : status);
 }
 
-int exec_shell_command(command_t commands[], char ***envp)
+int exec_shell_commands(command_t commands[], char ***envp)
 {
     char *path_to_executable = NULL;
     int status = 0;

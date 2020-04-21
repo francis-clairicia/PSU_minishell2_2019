@@ -9,7 +9,7 @@ SRC_NO_TEST			=	src/main.c							\
 						src/mysh.c
 
 SRC_TEST			=	src/minishell.c						\
-						src/exec_shell_command.c			\
+						src/exec_shell_commands.c			\
 						src/exec_piped_commands.c			\
 						src/print_command_prompt.c			\
 						src/get_path_to_executable.c		\
