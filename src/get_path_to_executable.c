@@ -16,7 +16,7 @@ static int check_access(char const *filepath)
     if (stat(filepath, &infos) < 0) {
         print_error(filepath, "Command not found");
         return (0);
-    } else if (access(filepath, X_OK) < 0){
+    } else if (access(filepath, X_OK) < 0) {
         print_error(filepath, strerror(errno));
         return (0);
     }
