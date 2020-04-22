@@ -33,12 +33,9 @@ builtin_t is_builtin(char * const *cmd)
 static int exec_builtin(builtin_t builtin, command_t *command,
     char ***envp, bool in_fork)
 {
-    char *line = NULL;
     int save_stdout = 0;
     int status = 0;
 
-    while (command->input_fd != 0 && get_next_line(&line, command->input_fd));
-    free(line);
     save_stdout = dup(STDOUT_FILENO);
     dup2(command->output_fd, STDOUT_FILENO);
     status = builtin(command->argv, envp);
