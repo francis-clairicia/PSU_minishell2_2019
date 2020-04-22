@@ -63,15 +63,16 @@ int get_output_fd(char *line);
 int get_character_index(char const *line, char character);
 bool check_redirection_validity(char const *line);
 
-typedef int (*builtin_function_t)(char * const *av, char ***envp);
+typedef int (*builtin_t)(char * const *av, char ***envp);
 
 struct builtin
 {
     char const *command;
-    builtin_function_t function;
+    builtin_t function;
 };
 
-builtin_function_t is_builtin(char * const *cmd);
+int launch_builtin(builtin_t builtin, command_t commands[], char ***envp);
+builtin_t is_builtin(char * const *cmd);
 int cd_builtin_command(char * const *av, char ***envp);
 int env_builtin_command(char * const *av, char ***envp);
 int exit_builtin_command(char * const *av, char ***envp);

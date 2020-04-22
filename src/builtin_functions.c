@@ -16,7 +16,7 @@ static const struct builtin builtin_functions_list[] = {
     {NULL, NULL}
 };
 
-builtin_function_t is_builtin(char * const *cmd)
+builtin_t is_builtin(char * const *cmd)
 {
     int i = 0;
 
@@ -28,4 +28,42 @@ builtin_function_t is_builtin(char * const *cmd)
         i += 1;
     }
     return (NULL);
+}
+
+static int exec_builtin(builtin_t builtin, command_t *command,
+    char ***envp, bool in_fork)
+{
+    char *line = NULL;
+    int save_stdout = 0;
+    int status = 0;
+
+    while (command->input_fd != 0 && get_next_line(&line, command->input_fd));
+    free(line);
+    save_stdout = dup(STDOUT_FILENO);
+    dup2(command->output_fd, STDOUT_FILENO);
+    status = builtin(command->argv, envp);
+    dup2(save_stdout, STDOUT_FILENO);
+    return ((in_fork) ? 1 : (status));
+}
+
+int launch_builtin(builtin_t builtin, command_t commands[], char ***envp)
+{
+    command_t *command = &commands[0];
+    int status = 0;
+    int status_pipe = 0;
+    int child_pid = -1;
+
+    if (commands[1].argv == NULL) {
+        status = exec_builtin(builtin, command, envp, false);
+    } else {
+        child_pid = fork();
+        if (child_pid == 0)
+            return (exec_builtin(builtin, command, envp, true));
+    }
+    destroy_command(command);
+    if (commands[1].argv != NULL)
+        status_pipe = exec_shell_commands(&commands[1], envp);
+    if (child_pid != -1)
+        waitpid(child_pid, NULL, 0);
+    return ((status_pipe != 0) ? status_pipe : status);
 }
