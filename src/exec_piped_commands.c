@@ -16,6 +16,7 @@ static bool link_all_commands(command_t commands[], int nb_commands)
         if (pipe(pipefd) != 0)
             return (false);
         commands[i - 1].output_fd = pipefd[1];
+        commands[i - 1].error_fd = pipefd[1];
         commands[i].input_fd = pipefd[0];
     }
     return (true);

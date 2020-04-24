@@ -18,6 +18,7 @@ command_t init_command_struct(void)
 
     cmd.input_fd = STDIN_FILENO;
     cmd.output_fd = STDOUT_FILENO;
+    cmd.error_fd = STDERR_FILENO;
     cmd.argv = NULL;
     return (cmd);
 }

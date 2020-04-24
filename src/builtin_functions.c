@@ -33,13 +33,15 @@ builtin_t is_builtin(char * const *cmd)
 static int exec_builtin(builtin_t builtin, command_t *command,
     char ***envp, bool in_fork)
 {
-    int save_stdout = 0;
+    int save_stdout = dup(STDOUT_FILENO);
+    int save_stderr = dup(STDERR_FILENO);
     int status = 0;
 
-    save_stdout = dup(STDOUT_FILENO);
     dup2(command->output_fd, STDOUT_FILENO);
+    dup2(command->error_fd, STDERR_FILENO);
     status = builtin(command->argv, envp);
     dup2(save_stdout, STDOUT_FILENO);
+    dup2(save_stderr, STDERR_FILENO);
     return ((in_fork) ? 1 : (status));
 }
 

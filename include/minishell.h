@@ -40,6 +40,7 @@ typedef struct command_line
     char **argv;
     int input_fd;
     int output_fd;
+    int error_fd;
 } command_t;
 
 int mysh(void);

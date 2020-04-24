@@ -8,8 +8,11 @@
 #include <string.h>
 #include "minishell.h"
 
-static int handle_status(int wstatus, int status_pipe)
+static int handle_status(int child_pid, int status_pipe)
 {
+    int wstatus = 0;
+
+    waitpid(child_pid, &wstatus, 0);
     if (WIFSIGNALED(wstatus)) {
         if (WTERMSIG(wstatus) != SIGINT) {
             print_signal(WTERMSIG(wstatus), WCOREDUMP(wstatus));
@@ -23,7 +26,6 @@ static int handle_status(int wstatus, int status_pipe)
 static int launch_process(char const *binary, command_t commands[],
     char ***envp)
 {
-    int wstatus = 0;
     int status_pipe = 0;
     int child_pid = 0;
     command_t *command = &commands[0];
@@ -34,6 +36,7 @@ static int launch_process(char const *binary, command_t commands[],
     if (child_pid == 0) {
         dup2(command->input_fd, STDIN_FILENO);
         dup2(command->output_fd, STDOUT_FILENO);
+        dup2(command->error_fd, STDERR_FILENO);
         if (execve(binary, command->argv, *envp) < 0)
             print_error(command->argv[0], error_exec(errno));
         return (1);
@@ -41,8 +44,7 @@ static int launch_process(char const *binary, command_t commands[],
     destroy_command(command);
     if (commands[1].argv != NULL)
         status_pipe = exec_shell_commands(&commands[1], envp);
-    waitpid(child_pid, &wstatus, 0);
-    return (handle_status(wstatus, status_pipe));
+    return (handle_status(child_pid, status_pipe));
 }
 
 int exec_shell_commands(command_t commands[], char ***envp)
